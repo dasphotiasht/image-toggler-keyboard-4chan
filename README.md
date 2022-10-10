@@ -8,5 +8,7 @@
 - Press "d" (the default key) on any 4chan posts and try to toggle the image.
 
 ## Changelogs
+- 0.2:
+    - Added visualizer and board image manager class
 - 0.1:
     - Core functionalities (get images, toggle top most image visible on screen)

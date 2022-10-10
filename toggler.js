@@ -33,31 +33,94 @@ class BoardImage {
       this._clicked = true;
     }
   }
-}
 
-class Toggler {
-  _images;
-  _key;
-
-  constructor(parentEl = document, key = "d") {
-    this._key = key;
-    this._init(parentEl);
+  visualize() {
+    if (this._clicked) {
+      this._expandedImage.style.border = "3px solid green";
+    } else {
+      this._imageEl.style.border = "3px solid green";
+    }
   }
 
-  _init(parentEl) {
-    document.addEventListener("keypress", this._keyPressHandler.bind(this));
-    const images = Array.from(parentEl.querySelectorAll("img"));
-    this._images = images.map(image => new BoardImage(image));
-  }
-
-  _keyPressHandler(event) {
-    if (event.key === this._key) {
-      let topMostImage = this._images.find(image => image.getRelativeTop() > 0);
-      if (topMostImage) {
-        topMostImage.click();
-      }
+  devisualize() {
+    if (this._clicked) {
+      this._expandedImage.style.border = "";
+    } else {
+      this._imageEl.style.border = "";
     }
   }
 }
 
-const toggler = new Toggler(document.querySelector(".board"));
+class KeyHandler {
+  _onPressKey;
+  _key;
+
+  constructor(onPressKey, key = "d") {
+    this._key = key;
+    this._onPressKey = onPressKey;
+    document.addEventListener("keypress", this._keyPressHandler.bind(this));
+  }
+
+  _keyPressHandler(event) {
+    if (event.key === this._key) {
+      this._onPressKey();
+    }
+  }
+}
+
+class ScrollHandler {
+  _onScroll;
+
+  constructor(onScroll) {
+    this._onScroll = onScroll;
+    this._createScrollStopListener(this._scrollHandler.bind(this));
+  }
+
+  _createScrollStopListener(callback, timeout = 200) {
+    var handle = null;
+    var onScroll = function() {
+      if (handle) clearTimeout(handle); 
+      handle = setTimeout(callback, timeout);
+    };
+    document.addEventListener("scroll", onScroll);
+  }
+
+  _scrollHandler() {
+    this._onScroll();
+  }
+}
+
+class BoardImageManager {
+  _images;
+  _curVisualized;
+
+  constructor(parentEl = document) {
+    const imageElements = Array.from(parentEl.querySelectorAll("img"))
+    this._images = imageElements.map(image => new BoardImage(image));
+    const toggler = new KeyHandler(this._onPressKey.bind(this));
+    const visualizer = new ScrollHandler(this._onScroll.bind(this));
+  }
+
+  _getTopMostImage() {
+    return this._images.find(image => image.getRelativeTop() > 0);
+  }
+
+  _onScroll() {
+    if (this._curVisualized) {
+      this._curVisualized.devisualize();
+    }
+
+    const topMostImage = this._getTopMostImage();
+    if (topMostImage) { 
+      this._curVisualized = topMostImage;
+      topMostImage.visualize();
+    }
+  }
+
+  _onPressKey() {
+    const topMostImage = this._getTopMostImage();
+    if (topMostImage) topMostImage.click();
+  }
+}
+
+const manager = new BoardImageManager(document.querySelector(".board"))
