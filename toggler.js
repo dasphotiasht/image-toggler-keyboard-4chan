@@ -19,7 +19,11 @@ class BoardImage {
   }
 
   getRelativeTop() {
-    return this._imageEl.getBoundingClientRect().top || this._expandedImage.getBoundingClientRect().top;
+    if (this._clicked) {
+      return this._expandedImage.getBoundingClientRect().top;
+    } else {
+      return this._imageEl.getBoundingClientRect().top;
+    }
   }
 
   click() {
