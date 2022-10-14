@@ -11,44 +11,50 @@
 
 class BoardImage {
   _imageEl;
-  _expandedImage;
-  _clicked = false;
 
   constructor(imageEl) {
     this._imageEl = imageEl;
   }
 
+  _getImgSibling() {
+    const sibling = this._imageEl.nextElementSibling;
+    if (sibling && sibling.nodeName === "IMG") {
+      return sibling;
+    }
+    return null;
+  }
+
   getRelativeTop() {
-    if (this._clicked) {
-      return this._expandedImage.getBoundingClientRect().top;
+    const imgSibling = this._getImgSibling();
+    if (imgSibling) {
+      return imgSibling.getBoundingClientRect().top;
     } else {
       return this._imageEl.getBoundingClientRect().top;
     }
   }
 
   click() {
-    if (this._clicked) {
-      this._expandedImage.click();
-      this._expandedImage = null;
-      this._clicked = false;
+    const imgSibling = this._getImgSibling();
+    if (imgSibling) {
+      imgSibling.click();
     } else {
       this._imageEl.click();
-      this._expandedImage = this._imageEl.nextElementSibling;
-      this._clicked = true;
     }
   }
 
   visualize() {
-    if (this._clicked) {
-      this._expandedImage.style.border = "3px solid green";
+    const imgSibling = this._getImgSibling();
+    if (imgSibling) {
+      imgSibling.style.border = "3px solid green";
     } else {
       this._imageEl.style.border = "3px solid green";
     }
   }
 
   devisualize() {
-    if (this._clicked) {
-      this._expandedImage.style.border = "";
+    const imgSibling = this._getImgSibling();
+    if (imgSibling) {
+      imgSibling.style.border = "";
     } else {
       this._imageEl.style.border = "";
     }
@@ -106,12 +112,16 @@ class BoardImageManager {
   }
 
   _getTopMostImage() {
+    if (this._curVisualized) {
+      return this._curVisualized;
+    }
     return this._images.find(image => image.getRelativeTop() > 0);
   }
 
   _onScroll() {
     if (this._curVisualized) {
       this._curVisualized.devisualize();
+      this._curVisualized = null;
     }
 
     const topMostImage = this._getTopMostImage();
