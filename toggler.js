@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Keybind Image Toggler 4chan
 // @namespace    http://dasphotias.ht/
-// @version      0.0.1
+// @version      0.3
 // @author       Dasphotiasht
 // @include      *://boards.4chan.org/*/thread/*
 // @include      *://boards.4channel.org/*/thread/*
+// @updateURL    https://raw.githubusercontent.com/dasphotiasht/image-toggler-keyboard-4chan/master/toggler.js
 // @description  Add keybind to be able to toggle the top most image on screen
 // @run-at       document-end
 // ==/UserScript==
