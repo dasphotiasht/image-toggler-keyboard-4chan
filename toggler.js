@@ -16,16 +16,37 @@ class BoardImage {
     this._imageEl = imageEl;
   }
 
-  _getImgSibling() {
+  _getImgPreview() {
     const sibling = this._imageEl.nextElementSibling;
     if (sibling && sibling.nodeName === "IMG") {
       return sibling;
     }
+
+    const videoElement = this._imageEl.parentElement.nextElementSibling;
+    if (videoElement && videoElement.nodeName === "VIDEO") {
+      return videoElement;
+    }
+      
+    return null;
+  }
+
+  _getToggler() {
+    const sibling = this._imageEl.nextElementSibling;
+    if (sibling && sibling.nodeName === "IMG") {
+      return sibling;
+    }
+
+    const linkElements = this._imageEl.parentElement.parentElement.querySelectorAll("a");
+    const closeElement = Array.from(linkElements).find(el => el.innerText === "Close");
+    if (closeElement) {
+      return closeElement;
+    }
+      
     return null;
   }
 
   getRelativeTop() {
-    const imgSibling = this._getImgSibling();
+    const imgSibling = this._getImgPreview();
     if (imgSibling) {
       return imgSibling.getBoundingClientRect().top;
     } else {
@@ -34,7 +55,7 @@ class BoardImage {
   }
 
   click() {
-    const imgSibling = this._getImgSibling();
+    const imgSibling = this._getToggler();
     if (imgSibling) {
       imgSibling.click();
     } else {
@@ -43,7 +64,7 @@ class BoardImage {
   }
 
   visualize() {
-    const imgSibling = this._getImgSibling();
+    const imgSibling = this._getImgPreview();
     if (imgSibling) {
       imgSibling.style.border = "3px solid green";
     } else {
@@ -52,7 +73,7 @@ class BoardImage {
   }
 
   devisualize() {
-    const imgSibling = this._getImgSibling();
+    const imgSibling = this._getImgPreview();
     if (imgSibling) {
       imgSibling.style.border = "";
     } else {
