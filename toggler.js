@@ -104,11 +104,15 @@ class KeyHandler {
 }
 
 class ScrollHandler {
-  _onScroll;
+  _listeners;
 
-  constructor(onScroll) {
-    this._onScroll = onScroll;
+  constructor() {
+    this._listeners = [];
     this._createScrollStopListener(this._scrollHandler.bind(this));
+  }
+
+  addListener(listener) {
+    this._listeners.push(listener);
   }
 
   _createScrollStopListener(callback, timeout = 200) {
@@ -121,7 +125,7 @@ class ScrollHandler {
   }
 
   _scrollHandler() {
-    this._onScroll();
+    this._listeners.forEach(listener => listener());
   }
 }
 
@@ -135,7 +139,8 @@ class BoardImageManager {
     const keyHandler = new KeyHandler();
     keyHandler.addKey('d', this._onPressKey.bind(this));
     keyHandler.addKey('f', this._onToggleMute.bind(this));
-    const visualizer = new ScrollHandler(this._onScroll.bind(this));
+    const scrollHandler = new ScrollHandler();
+    scrollHandler.addListener(this._onScroll.bind(this));
   }
 
   _getTopMostImage() {
