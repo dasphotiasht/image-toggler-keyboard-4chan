@@ -8,6 +8,8 @@
 - Press "d" (the default key) on any 4chan posts and try to toggle the image.
 
 ## Changelogs
+- 0.4:
+    - Added toggle mute for webm
 - 0.3:
     - Added support for .webm
 - 0.2:

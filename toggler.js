@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Keybind Image Toggler 4chan
 // @namespace    http://dasphotias.ht/
-// @version      0.3
+// @version      0.4
 // @author       Dasphotiasht
 // @include      *://boards.4chan.org/*/thread/*
 // @include      *://boards.4channel.org/*/thread/*
@@ -130,6 +130,7 @@ class BoardImageManager {
     const imageElements = Array.from(parentEl.querySelectorAll("img"))
     this._images = imageElements.map(image => new BoardImage(image));
     const toggler = new KeyHandler(this._onPressKey.bind(this));
+    const unmuter = new KeyHandler(this._onToggleMute.bind(this), 'f')
     const visualizer = new ScrollHandler(this._onScroll.bind(this));
   }
 
@@ -156,6 +157,13 @@ class BoardImageManager {
   _onPressKey() {
     const topMostImage = this._getTopMostImage();
     if (topMostImage) topMostImage.click();
+  }
+
+  _onToggleMute() {
+    const currentPlayingVideo = document.querySelector('video');
+    if (currentPlayingVideo) {
+      currentPlayingVideo.muted = !currentPlayingVideo.muted;
+    }
   }
 }
 
