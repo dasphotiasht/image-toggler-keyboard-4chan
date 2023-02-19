@@ -5,11 +5,13 @@
 
 ## How to use
 - Install [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) and insert `toggler.js` script to Tampermonkey's create new script menu.
-- Press "d" (the default key) on any 4chan posts and try to toggle the image.
+- Press 'e' (the default key) on any 4chan posts and try to toggle the image.
 
 ## Changelogs
 - 0.4:
-    - Added toggle mute for webm
+    - Added toggle mute for webm ('c' key)
+    - Added fullscreen video ('f' key)
+    - Added rewind/forward video ('a' and 'd' key)
 - 0.3:
     - Added support for .webm
 - 0.2:

@@ -10,8 +10,15 @@
 // @run-at       document-end
 // ==/UserScript==
 
-class BoardImage {
-  _imageEl;
+const FORWARD_AMOUNT = 3;
+const FORWARD_KEY = "d";
+const REWIND_KEY = "a";
+const TOGGLE_MUTE_KEY = "c";                                                                                     ;
+const TOGGLE_FULLSCREEN_KEY = "f";
+const TOGGLE_IMG_KEY = "e"; 
+
+class BoardImage { 
+  _imageEl; 
 
   constructor(imageEl) {
     this._imageEl = imageEl;
@@ -61,6 +68,15 @@ class BoardImage {
       imgSibling.click();
     } else {
       this._imageEl.click();
+    }
+  }
+
+  focus() {
+    const imgSibling = this._getImgPreview();
+    if (imgSibling) {
+      imgSibling.focus();
+    } else {
+      this._imageEl.focus();
     }
   }
 
@@ -137,8 +153,11 @@ class BoardImageManager {
     const imageElements = Array.from(parentEl.querySelectorAll("img"))
     this._images = imageElements.map(image => new BoardImage(image));
     const keyHandler = new KeyHandler();
-    keyHandler.addKey('d', this._onPressKey.bind(this));
-    keyHandler.addKey('f', this._onToggleMute.bind(this));
+    keyHandler.addKey(TOGGLE_IMG_KEY, this._onToggleImg.bind(this));
+    keyHandler.addKey(TOGGLE_MUTE_KEY, this._onToggleMute.bind(this));
+    keyHandler.addKey(TOGGLE_FULLSCREEN_KEY, this._onToggleFullscreen.bind(this));
+    keyHandler.addKey(FORWARD_KEY, this._onForwardVideo.bind(this));
+    keyHandler.addKey(REWIND_KEY, this._onRewindVideo.bind(this));
     const scrollHandler = new ScrollHandler();
     scrollHandler.addListener(this._onScroll.bind(this));
   }
@@ -155,6 +174,15 @@ class BoardImageManager {
     });
   }
 
+  _getLastVideoElement() {
+    const videoEls = document.querySelectorAll("video");
+    if (videoEls.length > 0) {
+      const lastVidEl = videoEls[videoEls.length - 1];
+      return lastVidEl;
+    }
+    return null;
+  }
+
   _onScroll() {
     if (this._curVisualized) {
       this._curVisualized.devisualize();
@@ -168,14 +196,38 @@ class BoardImageManager {
     }
   }
 
-  _onPressKey() {
-    if (this._curVisualized) this._curVisualized.click();
+  _onToggleImg() {
+    if (this._curVisualized) {
+      this._curVisualized.click();
+      this._curVisualized.focus();
+    }
   }
 
   _onToggleMute() {
-    const currentPlayingVideo = document.querySelector('video');
-    if (currentPlayingVideo) {
-      currentPlayingVideo.muted = !currentPlayingVideo.muted;
+    const lastVidEl = this._getLastVideoElement()
+    if(lastVidEl) {
+      lastVidEl.muted = !lastVidEl.muted;
+    }
+  }
+
+  _onToggleFullscreen() {
+    const lastVidEl = this._getLastVideoElement()
+    if(lastVidEl) {
+      lastVidEl.requestFullscreen();
+    }
+  }
+
+  _onForwardVideo() {
+    const lastVidEl = this._getLastVideoElement()
+    if(lastVidEl) {
+      lastVidEl.currentTime += FORWARD_AMOUNT;
+    }
+  }
+
+  _onRewindVideo() {
+    const lastVidEl = this._getLastVideoElement()
+    if(lastVidEl) {
+      lastVidEl.currentTime -= FORWARD_AMOUNT;
     }
   }
 }
