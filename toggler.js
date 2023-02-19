@@ -147,7 +147,12 @@ class BoardImageManager {
     if (this._curVisualized) {
       return this._curVisualized;
     }
-    return this._images.find(image => image.getRelativeTop() > 0);
+
+    const windowHeight = window.innerHeight;
+    return this._images.find(image => {
+      const relTop = image.getRelativeTop();
+      return (relTop > 0 && relTop < windowHeight);
+    });
   }
 
   _onScroll() {
@@ -164,8 +169,7 @@ class BoardImageManager {
   }
 
   _onPressKey() {
-    const topMostImage = this._getTopMostImage();
-    if (topMostImage) topMostImage.click();
+    if (this._curVisualized) this._curVisualized.click();
   }
 
   _onToggleMute() {
