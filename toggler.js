@@ -84,18 +84,21 @@ class BoardImage {
 }
 
 class KeyHandler {
-  _onPressKey;
-  _key;
+  _keys;
 
-  constructor(onPressKey, key = "d") {
-    this._key = key;
-    this._onPressKey = onPressKey;
+  constructor() {
+    this._keys = {};
     document.addEventListener("keypress", this._keyPressHandler.bind(this));
   }
 
+  addKey(key, handler) {
+    this._keys[key] = handler;
+  }
+
   _keyPressHandler(event) {
-    if (event.key === this._key) {
-      this._onPressKey();
+    const handler = this._keys[event.key]
+    if (handler) {
+      handler(event);
     }
   }
 }
@@ -129,8 +132,9 @@ class BoardImageManager {
   constructor(parentEl = document) {
     const imageElements = Array.from(parentEl.querySelectorAll("img"))
     this._images = imageElements.map(image => new BoardImage(image));
-    const toggler = new KeyHandler(this._onPressKey.bind(this));
-    const unmuter = new KeyHandler(this._onToggleMute.bind(this), 'f')
+    const keyHandler = new KeyHandler();
+    keyHandler.addKey('d', this._onPressKey.bind(this));
+    keyHandler.addKey('f', this._onToggleMute.bind(this));
     const visualizer = new ScrollHandler(this._onScroll.bind(this));
   }
 
